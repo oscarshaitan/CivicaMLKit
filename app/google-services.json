@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "888797136682",
+    "firebase_url": "https://civicamlkit.firebaseio.com",
+    "project_id": "civicamlkit",
+    "storage_bucket": "civicamlkit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:888797136682:android:556e08e152c6302d",
+        "android_client_info": {
+          "package_name": "com.example.civicamlkit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "888797136682-s81gr9a8neu126e3rg8fhn7neun5biuj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNobkQdRZe4g8LWw_CUvhH5v11wFXRkbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "888797136682-s81gr9a8neu126e3rg8fhn7neun5biuj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
