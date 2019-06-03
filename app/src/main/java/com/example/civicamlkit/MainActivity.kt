@@ -103,6 +103,7 @@ class MainActivity : AppCompatActivity() {
                 val resultText = firebaseVisionText.text
                 println("RESULTADO")
                 println(resultText)
+                result?.text = resultText
             }
             .addOnFailureListener {
                 // Task failed with an exception
@@ -118,42 +119,4 @@ class MainActivity : AppCompatActivity() {
             matrix, true
         )
     }
-
-    /*private fun runTextRecognition() {
-        val image = FirebaseVisionImage.fromBitmap(bitmap?.let { it } ?: return)
-        val recognizer = FirebaseVision.getInstance()
-            .onDeviceTextRecognizer
-        btnDetect.isEnabled = false
-        recognizer.processImage(image)
-            .addOnSuccessListener { texts ->
-                btnDetect.isEnabled = true
-                processTextRecognitionResult(texts)
-            }
-            .addOnFailureListener { e ->
-                // Task failed with an exception
-                btnDetect.isEnabled = true
-                e.printStackTrace()
-            }
-    }
-
-    private fun processTextRecognitionResult(texts: FirebaseVisionText) {
-        val blocks = texts.textBlocks
-        if (blocks.size == 0) {
-            Toast.makeText(applicationContext, "No text found", Toast.LENGTH_SHORT).show()
-            return
-        }
-        mGraphicOverlay.clear()
-        for (i in blocks.indices) {
-            val lines = blocks[i].lines
-            for (j in lines.indices) {
-                val elements = lines[j].elements
-                for (k in elements.indices) {
-                    val textGraphic = TextGraphic(mGraphicOverlay, elements[k])
-                    mGraphicOverlay.add(textGraphic)
-
-                }
-            }
-        }
-    }*/
-
 }
