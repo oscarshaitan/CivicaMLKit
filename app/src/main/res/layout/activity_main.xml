@@ -11,37 +11,45 @@
 			android:layout_width="match_parent"
 			android:layout_height="500dp"
 			android:id="@+id/imageView"
+			android:scaleType="fitXY"
+			android:contentDescription="@null"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintTop_toTopOf="parent"/>
+
+	<com.example.civicamlkit.utils.DrawerGraphicOverlay
+			android:id="@+id/overlay"
+			android:layout_width="match_parent"
+			android:layout_height="500dp"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentStart="true"
+			android:layout_alignParentTop="true"/>
 
 	<Button
 			android:id="@+id/btnPick"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="PICK IMAGE"
-			android:layout_marginEnd="8dp"
+			android:layout_margin="8dp"
 			app:layout_constraintStart_toStartOf="parent"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="8dp"
-			android:layout_marginBottom="8dp"
+			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintVertical_bias="0.0"
 			app:layout_constraintTop_toBottomOf="@+id/imageView"
 			app:layout_constraintEnd_toStartOf="@+id/btnDetect"
-			app:layout_constraintHorizontal_bias="0.752"
-			app:layout_constraintBottom_toTopOf="@+id/result"/>
+			app:layout_constraintHorizontal_bias="0.752"/>
 
 	<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="Detect Text"
 			android:id="@+id/btnDetect"
+			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			android:layout_marginEnd="60dp"
-			android:layout_marginTop="8dp"
+			android:layout_margin="8dp"
 			app:layout_constraintTop_toBottomOf="@+id/imageView"
-			android:layout_marginBottom="8dp"
+			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintVertical_bias="0.0"
+			app:layout_constraintHorizontal_bias="0.752"
 			app:layout_constraintBottom_toTopOf="@+id/result"/>
 
 	<TextView

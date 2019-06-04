@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -19,7 +20,6 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 class MainActivity : AppCompatActivity() {
     private val REQUEST_IMAGE_CAPTURE = 1
@@ -86,28 +86,45 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+    // Necesary to draw over the detection
+    private fun resizeImage(currentPhotoPath: String?): Bitmap? {
+        val pic = rotateImage(BitmapFactory.decodeFile(currentPhotoPath), 90.0F)
+        return pic?.let {
+            val scaleFactor = Math.max(
+                it.width.toFloat() / imageView.width.toFloat(),
+                it.height.toFloat() / imageView.height.toFloat()
+            )
+
+            Bitmap.createScaledBitmap(
+                it,
+                (it.width / scaleFactor).toInt(),
+                (it.height / scaleFactor).toInt(),
+                true
+            )
+        }
+    }
+
     private fun showPreview(currentPhotoPath: String?) {
-        bitmap = rotateImage(BitmapFactory.decodeFile(currentPhotoPath),90.0F)
+        bitmap = resizeImage(currentPhotoPath)
         imageView.setImageBitmap(bitmap)
 
         val fileToDelete = File(currentPhotoPath)
         fileToDelete.delete()
     }
 
-    private fun detectText(){
+    private fun detectText() {
         val image = FirebaseVisionImage.fromBitmap(bitmap?.let { it } ?: return)
         val detector = FirebaseVision.getInstance()
             .onDeviceTextRecognizer
         detector.processImage(image)
-            .addOnSuccessListener { firebaseVisionText ->
-                val resultText = firebaseVisionText.text
-                println("RESULTADO")
-                println(resultText)
-                result?.text = resultText
+            .addOnSuccessListener { texts ->
+                processTextRecognitionResult(texts)
             }
             .addOnFailureListener {
-                // Task failed with an exception
-                // ...
+                Toast.makeText(applicationContext, "Oh no... Something happend: ${it.message}", Toast.LENGTH_SHORT)
+                    .show()
+
+                it.printStackTrace()
             }
     }
 
@@ -118,5 +135,25 @@ class MainActivity : AppCompatActivity() {
             source, 0, 0, source.width, source.height,
             matrix, true
         )
+    }
+
+    private fun processTextRecognitionResult(texts: FirebaseVisionText) {
+        val blocks = texts.textBlocks
+        if (blocks.size == 0) {
+            Toast.makeText(applicationContext, "No text found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        result?.text = texts.text
+
+        overlay.clear()
+        blocks.forEach { block ->
+            block.lines.forEach { line ->
+                line.elements.forEach { element ->
+                    overlay.addText(element.text, element.boundingBox)
+                    Log.i("MainActivity", "Box found: \n ${element.boundingBox}")
+                }
+            }
+        }
     }
 }
