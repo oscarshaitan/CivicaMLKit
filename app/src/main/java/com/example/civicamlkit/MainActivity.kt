@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -25,6 +24,9 @@ class MainActivity : AppCompatActivity() {
     private val REQUEST_IMAGE_CAPTURE = 1
     private var currentPhotoPath: String? = null
     private var bitmap: Bitmap? = null
+    private val NAME_PATTERN: String =
+        "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$"
+    private val NUMBER_CARD_PATTERN: String = "^Civ\\.?\\s?[0-9]+$"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,8 +90,9 @@ class MainActivity : AppCompatActivity() {
 
     // Necesary to draw over the detection
     private fun resizeImage(currentPhotoPath: String?): Bitmap? {
-        val pic = rotateImage(BitmapFactory.decodeFile(currentPhotoPath), 90.0F)
-        return pic?.let {
+//        val pic = rotateImage(BitmapFactory.decodeFile(currentPhotoPath), 90.0F)
+        val pic = BitmapFactory.decodeFile(currentPhotoPath)
+        return pic.let {
             val scaleFactor = Math.max(
                 it.width.toFloat() / imageView.width.toFloat(),
                 it.height.toFloat() / imageView.height.toFloat()
@@ -139,21 +142,33 @@ class MainActivity : AppCompatActivity() {
 
     private fun processTextRecognitionResult(texts: FirebaseVisionText) {
         val blocks = texts.textBlocks
+        var name: String? = ""
+        val nameRegex = Regex(NAME_PATTERN)
+        val cardRegex = Regex(NUMBER_CARD_PATTERN)
+
         if (blocks.size == 0) {
             Toast.makeText(applicationContext, "No text found", Toast.LENGTH_SHORT).show()
             return
         }
 
-        result?.text = texts.text
-
         overlay.clear()
         blocks.forEach { block ->
             block.lines.forEach { line ->
-                line.elements.forEach { element ->
-                    overlay.addText(element.text, element.boundingBox)
-                    Log.i("MainActivity", "Box found: \n ${element.boundingBox}")
+
+                if (nameRegex.matches(line.text)) {
+                    name = "$name ${line.text}"
+
+                    if (!name.equals("Civica"))
+                        overlay.addText(line.text, line.boundingBox)
+                }
+
+                if (cardRegex.matches(line.text)) {
+                    resultCard?.text = "Numero tarjeta: ${line.text.replace("Civ", "").replace(".", "")}"
+                    overlay.addText(line.text, line.boundingBox)
                 }
             }
         }
+
+        resultName?.text = "Usuario: ${name?.replace("Civica", "")}"
     }
 }
